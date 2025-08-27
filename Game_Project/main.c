@@ -8,6 +8,36 @@
 #include <allegro5/allegro_image.h>
 #include "common.h"
 
+void draw_road_lines() {
+    float min_gap = 10;    // 위쪽 간격 (좁음)
+    float max_gap = 60;   // 아래쪽 간격 (넓음)
+    float min_thick = 1;  // 위쪽 라인 두께 (얇음)
+    float max_thick = 6;  // 아래쪽 라인 두께 (굵음)
+
+    float start_y = 110;           // HUD 아래부터 도로 시작
+    float end_y = PLAYER_MAX_Y;  // 도로 끝
+    float y = start_y;
+
+    while (y < end_y) {
+        // y를 0~1 비율로 환산
+        float t = (y - start_y) / (end_y - start_y);
+
+        // 보간 (lerp)
+        float gap = min_gap + t * (max_gap - min_gap);
+        float thick = min_thick + t * (max_thick - min_thick);
+
+        // 차선 그리기 (가로선)
+        al_draw_line(
+            0, y, BUFFER_W, y,                // 왼쪽에서 오른쪽까지
+            al_map_rgb(200, 200, 200),        // 회색 차선
+            thick
+        );
+
+        // 다음 라인 위치 = 현재 위치 + 간격
+        y += gap;
+    }
+}
+
 int main() {
     must_init(al_init(), "allegro"); // Allegro 라이브러리 초기화
     must_init(al_install_keyboard(), "keyboard"); // 키보드 입력 초기화
@@ -67,9 +97,9 @@ int main() {
             shots_update();     // 총알 업데이트
             player_update();      // 플레이어 업데이트
             enemies_update();    // 적 업데이트
-            if (frames > 10) {   // 첫 10프레임 동안만 소환 허용
-                spawn_enabled = false;
-            }
+            //if (frames > 10) {   // 첫 10프레임 동안만 소환 허용
+            //    spawn_enabled = false;
+            //}
 
             // ESC 키 -> 게임 종료
             if (key[ALLEGRO_KEY_ESCAPE])
@@ -98,13 +128,7 @@ int main() {
             disp_pre_draw(); // 더블 버퍼 준비
             al_clear_to_color(al_map_rgb(0, 0, 0)); // 화면 클리어 (검정색)
 
-            // HUD 영역과 게임 플레이 영역 경계선
-            al_draw_line(
-                0, 110, // 시작점 (왼쪽)
-                BUFFER_W, 110, // 끝점 (오른쪽)
-                al_map_rgb(255, 255, 255), // 색상
-                1.0 // 두께
-            );
+            draw_road_lines();
 
             enemies_draw(); // 적
             shots_draw();   // 총알

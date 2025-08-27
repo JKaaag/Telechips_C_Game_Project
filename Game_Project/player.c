@@ -70,18 +70,13 @@ void player_update()
         player.shot_timer--;
     else
     {
+        player.shot_timer = 30; // 재발사 대기 시간
         // Z키: 왼쪽으로 발사
-        if (key[ALLEGRO_KEY_Z]) {
-            if (shots_add(true, true, player.x, player.y, DIR_LEFT)) {
-                player.shot_timer = 5; // 재발사 대기
-            }
-        }
+        if (key[ALLEGRO_KEY_Z])
+            shots_add(true, true, player.x, player.y, DIR_LEFT);
         // X키: 오른쪽으로 발사
-        else if (key[ALLEGRO_KEY_X]) {
-            if (shots_add(true, true, player.x, player.y, DIR_RIGHT)) {
-                player.shot_timer = 5; // 재발사 대기
-            }
-        }
+        else if (key[ALLEGRO_KEY_X])
+            shots_add(true, true, player.x, player.y, DIR_RIGHT);
     }
 }
 
