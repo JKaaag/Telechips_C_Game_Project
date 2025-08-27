@@ -4,6 +4,7 @@ long frames;
 long score;
 
 void must_init(bool test, const char* description);
+int between(int lo, int hi);
 float between_f(float lo, float hi);
 bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2);
 
@@ -39,6 +40,14 @@ void keyboard_update(ALLEGRO_EVENT* event);
 #define PLAYER_SHOT_W 2
 #define PLAYER_SHOT_H 9
 
+extern const int ENEMY_W[];
+extern const int ENEMY_H[];
+
+#define ENEMY_1_W ENEMY_W[0]
+#define ENEMY_1_H ENEMY_H[0]
+#define ENEMY_2_W ENEMY_W[1]
+#define ENEMY_2_H ENEMY_H[1]
+
 #define ENEMY_SHOT_W 4
 #define ENEMY_SHOT_H 4
 
@@ -47,6 +56,8 @@ typedef struct SPRITES
     ALLEGRO_BITMAP* _sheet;
 
     ALLEGRO_BITMAP* player_shot[2];
+
+    ALLEGRO_BITMAP* enemy[2];
 } SPRITES;
 SPRITES sprites;
 
@@ -93,20 +104,22 @@ void player_draw();
 // enemy
 typedef enum ENEMY_TYPE
 {
-    ENEMY_NORMAL = 0, // 일반 몹
+    ENEMY_TYPE_1 = 0, // 일반 몹(1)
+    ENEMY_TYPE_2, // 일반 몹(2)
     ENEMY_TYPE_N // 몹 종류 개수
 } ENEMY_TYPE;
 
 typedef struct ENEMY
 {
     int x, y; // 몹의 현재 위치
+    int vx, vy; // 몹의 속도
     ENEMY_TYPE type; // 몹의 종류
     int blink; // 총알 맞은 후 깜빡인 효과용 타이머
     int hp; // 체력
     bool used; // 사용 중인지, 화면에 존재하는지 여부
 } ENEMY;
 
-#define ENEMIES_N 2
+#define ENEMIES_N 5
 ENEMY enemies[ENEMIES_N];
 
 void enemies_init();
