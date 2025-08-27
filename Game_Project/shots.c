@@ -13,7 +13,7 @@ void shots_init() {
         shots[i].used = false;
 }
 
-bool shots_add(bool player, bool straight, int x, int y) {
+bool shots_add(bool player, bool straight, int x, int y, DIRECTION dir) {
     // 사운드 재생 (플레이어/적 구분해서)
     al_play_sample(
         sample_shot,
@@ -33,9 +33,18 @@ bool shots_add(bool player, bool straight, int x, int y) {
 
         // 플레이어 총알이면 위치 설정
         if (player) {
-            shots[i].x = x - (PLAYER_SHOT_W / 2);
+            shots[i].x = x + (PLAYER_W / 2) - (PLAYER_SHOT_W / 2);
             shots[i].y = y;
+
+            // 플레이어 방향 저장
+            switch (dir) {
+                case DIR_UP:    shots[i].dir = SHOT_UP; break;
+                case DIR_DOWN:  shots[i].dir = SHOT_DOWN; break;
+                case DIR_LEFT:  shots[i].dir = SHOT_LEFT; break;
+                case DIR_RIGHT: shots[i].dir = SHOT_RIGHT; break;
+            }
         }
+        shots[i].dir = dir;
 
         shots[i].frame = 0;
         shots[i].used = true;
@@ -50,30 +59,37 @@ void shots_update() {
         if (!shots[i].used) continue;
 
         // 플레이어 총알 처리
+        
         if (shots[i].player) {
-            shots[i].y -= 5;
+            // 방향에 따라 이동
+            switch (shots[i].dir) {
+            case SHOT_UP:    shots[i].y -= 5; break;
+            case SHOT_DOWN:  shots[i].y += 5; break;
+            case SHOT_LEFT:  shots[i].x -= 5; break;
+            case SHOT_RIGHT: shots[i].x += 5; break;
+            }
 
-            // 화면 밖으로 나간 총알은 제거
-            if (shots[i].y < -PLAYER_SHOT_H) {
+            // 화면 밖이면 제거
+            if (shots[i].x < -PLAYER_SHOT_W || shots[i].x > BUFFER_W ||
+                shots[i].y < -PLAYER_SHOT_H || shots[i].y > BUFFER_H) {
                 shots[i].used = false;
-                continue;
             }
         }
         shots[i].frame++;
     }
 }
 
-bool shots_collide(bool ship, int x, int y, int w, int h) {
+bool shots_collide(bool player, int x, int y, int w, int h) {
     for (int i = 0; i < SHOTS_N; i++) {
         // 총알 사용 여부 확인
         if (!shots[i].used) continue;
 
         // 자기 자신의 총알은 제외
-        if (shots[i].player == ship) continue;
+        if (shots[i].player == player) continue;
 
         // 총알 크기 설정
         int sw, sh;
-        if (ship) {
+        if (player) {
             sw = ENEMY_SHOT_W;
             sh = ENEMY_SHOT_H;
         }
@@ -101,7 +117,26 @@ void shots_draw() {
         int frame_display = (shots[i].frame / 2) % 2;
 
         // 플레이어 총알
-        if (shots[i].player)
-            al_draw_bitmap(sprites.player_shot[frame_display], shots[i].x, shots[i].y, 0);
+        if (shots[i].player) {
+            ALLEGRO_BITMAP* bmp = sprites.player_shot[frame_display];
+
+            float angle = 0.0f;
+            switch (shots[i].dir) {
+            case DIR_UP:    angle = 0.0f;               break; // 원본 그대로
+            case DIR_DOWN:  angle = ALLEGRO_PI;         break; // 180도 뒤집기
+            case DIR_LEFT:  angle = -ALLEGRO_PI * 0.5f; break; // -90도
+            case DIR_RIGHT: angle = ALLEGRO_PI * 0.5f; break; // +90도
+            }
+
+            al_draw_rotated_bitmap(
+                bmp,
+                al_get_bitmap_width(bmp) / 2.0f,
+                al_get_bitmap_height(bmp) / 2.0f,
+                shots[i].x + al_get_bitmap_width(bmp) / 2.0f,
+                shots[i].y + al_get_bitmap_height(bmp) / 2.0f,
+                angle,
+                0
+            );
+        }
     }
 }

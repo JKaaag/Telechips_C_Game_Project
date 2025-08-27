@@ -26,15 +26,23 @@ void player_update()
     if (player.hp < 0)
         return;
 
-    // 키 입력에 따라 이동 처리
-    if (key[ALLEGRO_KEY_LEFT])
+    // 키 입력에 따라 이동 처리 및 플레이어 이동 방향 저장
+    if (key[ALLEGRO_KEY_LEFT]) {
         player.x -= PLAYER_SPEED;
-    if (key[ALLEGRO_KEY_RIGHT])
+        player.last_dir = DIR_LEFT;
+    }
+    if (key[ALLEGRO_KEY_RIGHT]) {
         player.x += PLAYER_SPEED;
-    if (key[ALLEGRO_KEY_UP])
+        player.last_dir = DIR_RIGHT;
+    }
+    if (key[ALLEGRO_KEY_UP]) {
         player.y -= PLAYER_SPEED;
-    if (key[ALLEGRO_KEY_DOWN])
+        player.last_dir = DIR_UP;
+    }
+    if (key[ALLEGRO_KEY_DOWN]) {
         player.y += PLAYER_SPEED;
+        player.last_dir = DIR_DOWN;
+    }
 
     // 화면 밖으로 나가지 않도록 제한
     if (player.x < 0)
@@ -69,7 +77,7 @@ void player_update()
         // 플레이어 총알 생성
         int x = player.x + (PLAYER_W / 2);
         // 발사 후 재발사 대기
-        if (shots_add(true, true, player.x, player.y))
+        if (shots_add(true, true, player.x, player.y, player.last_dir))
             player.shot_timer = 5;
     }
 }

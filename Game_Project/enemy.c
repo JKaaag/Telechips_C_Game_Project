@@ -16,7 +16,7 @@ void enemies_init()
         enemies[i].x = rand() % (BUFFER_W - PLAYER_W);
         enemies[i].y = rand() % (BUFFER_H - PLAYER_H);
         enemies[i].type = ENEMY_NORMAL;
-        enemies[i].hp = 100;
+        enemies[i].hp = 10;
         enemies[i].used = true;
     }
 }

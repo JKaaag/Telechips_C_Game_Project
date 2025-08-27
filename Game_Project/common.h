@@ -5,6 +5,7 @@ long score;
 
 void must_init(bool test, const char* description);
 float between_f(float lo, float hi);
+bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2);
 
 // display
 #define BUFFER_W 320
@@ -49,31 +50,31 @@ typedef struct SPRITES
 } SPRITES;
 SPRITES sprites;
 
+ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h);
+void sprites_init();
+void sprites_deinit();
+
 // audio
 ALLEGRO_SAMPLE* sample_shot; // 총알 발사 소리
 
-//shot
-typedef struct SHOT
-{
-    int x, y, dx, dy; // 총알 위치, 이동 속도
-    int frame; // 애니메이션 프레임
-    bool player; // 플레이어 총알(true), 적 총알(false) 구분
-    bool used; // 사용 여부(활성화된 총알인지)
-} SHOT;
+void audio_init();
+void audio_deinit();
 
-void shots_init();
-bool shots_add(bool player, bool straight, int x, int y);
-void shots_update();
-bool shots_collide(bool ship, int x, int y, int w, int h);
-void shots_draw();
-
-#define SHOTS_N 128
-SHOT shots[SHOTS_N];
+//collide
+bool enemies_collide();
 
 // player
 #define PLAYER_SPEED 3
 #define PLAYER_MAX_X (BUFFER_W - PLAYER_W)
 #define PLAYER_MAX_Y (BUFFER_H - PLAYER_H)
+
+// 플레이어 이동 방향
+typedef enum DIRECTION {
+    DIR_UP,
+    DIR_DOWN,
+    DIR_LEFT,
+    DIR_RIGHT
+} DIRECTION;
 
 typedef struct PLAYER
 {
@@ -81,6 +82,7 @@ typedef struct PLAYER
     int shot_timer; // 총알 발사 딜레이 카운터
     int hp; // 플레이어 HP
     int invincible_timer; // 무적 상태 타이머
+    DIRECTION last_dir;     // 마지막 이동 방향
 } PLAYER;
 PLAYER player;
 
@@ -106,6 +108,37 @@ typedef struct ENEMY
 
 #define ENEMIES_N 2
 ENEMY enemies[ENEMIES_N];
+
+void enemies_init();
+void enemies_update();
+void enemies_draw();
+
+//shot
+// 플레이어 총알 방향
+typedef enum SHOT_DIR {
+    SHOT_UP,
+    SHOT_DOWN,
+    SHOT_LEFT,
+    SHOT_RIGHT
+} SHOT_DIR;
+
+typedef struct SHOT
+{
+    int x, y, dx, dy; // 총알 위치, 이동 속도
+    int frame; // 애니메이션 프레임
+    bool player; // 플레이어 총알(true), 적 총알(false) 구분
+    bool used; // 사용 여부(활성화된 총알인지)
+    SHOT_DIR dir; // 총알 방향
+} SHOT;
+
+#define SHOTS_N 128
+SHOT shots[SHOTS_N];
+
+void shots_init();
+bool shots_add(bool player, bool straight, int x, int y, DIRECTION dir);
+void shots_update();
+bool shots_collide(bool player, int x, int y, int w, int h);
+void shots_draw();
 
 // hud
 ALLEGRO_FONT* font; // HUD용 폰트
