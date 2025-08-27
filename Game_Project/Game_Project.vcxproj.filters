@@ -18,8 +18,51 @@
     <ClCompile Include="main.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="general.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="display.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="hud.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="player.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="keyboard.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="collide.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="shots.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="audio.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="sprites.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="shot.flac">
+      <Filter>리소스 파일</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="spritesheet.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>
