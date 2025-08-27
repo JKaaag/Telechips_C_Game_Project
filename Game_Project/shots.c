@@ -128,14 +128,23 @@ void shots_draw() {
             case DIR_RIGHT: angle = ALLEGRO_PI * 0.5f; break; // +90도
             }
 
-            al_draw_rotated_bitmap(
+            float t = (float)(shots[i].y - 110) / (PLAYER_MAX_Y - 110);
+            if (t < 0) t = 0;
+            if (t > 1) t = 1;
+            float scale = DEPTH_MIN_SCALE + t * (DEPTH_MAX_SCALE - DEPTH_MIN_SCALE);
+
+            // 중심 좌표
+            float cx = al_get_bitmap_width(bmp) / 2.0f;
+            float cy = al_get_bitmap_height(bmp) / 2.0f;
+
+            al_draw_scaled_rotated_bitmap(
                 bmp,
-                al_get_bitmap_width(bmp) / 2.0f,
-                al_get_bitmap_height(bmp) / 2.0f,
-                shots[i].x + al_get_bitmap_width(bmp) / 2.0f,
-                shots[i].y + al_get_bitmap_height(bmp) / 2.0f,
-                angle,
-                0
+                cx, cy,                       // 회전 기준 (중심)
+                shots[i].x + cx,              // 화면상 X 위치
+                shots[i].y + cy,              // 화면상 Y 위치
+                scale, scale,                 // 스케일 적용
+                angle,                        // 회전
+                0                             // 플래그
             );
         }
     }

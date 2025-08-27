@@ -75,6 +75,9 @@ void audio_deinit();
 bool enemies_collide();
 
 // player
+float DEPTH_MIN_SCALE;
+float DEPTH_MAX_SCALE;
+
 #define PLAYER_SPEED 3
 #define PLAYER_MAX_X (BUFFER_W - PLAYER_W)
 #define PLAYER_MAX_Y (BUFFER_H - PLAYER_H)
@@ -93,7 +96,6 @@ typedef struct PLAYER
     int shot_timer; // 총알 발사 딜레이 카운터
     int hp; // 플레이어 HP
     int invincible_timer; // 무적 상태 타이머
-    DIRECTION last_dir;     // 마지막 이동 방향
 } PLAYER;
 PLAYER player;
 

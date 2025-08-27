@@ -132,6 +132,23 @@ void enemies_draw()
         if (enemies[i].blink > 2)
             continue; // 총알 맞았을 때 깜박인 동안 잠시 안 보이도록 처리
 
-        al_draw_bitmap(sprites.enemy[enemies[i].type], enemies[i].x, enemies[i].y, 0);
+
+        // 2.5D 효과: y좌표에 따라 크기 조정
+        float t = (float)(enemies[i].y - 110) / (PLAYER_MAX_Y - 110);
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
+        float scale = DEPTH_MIN_SCALE + t * (DEPTH_MAX_SCALE - DEPTH_MIN_SCALE);
+
+        int w = ENEMY_W[enemies[i].type];
+        int h = ENEMY_H[enemies[i].type];
+
+        // 스케일 적용해서 그리기
+        al_draw_scaled_bitmap(
+            sprites.enemy[enemies[i].type], // 원본 비트맵
+            0, 0, w, h,                     // 원본 크기
+            enemies[i].x, enemies[i].y,     // 위치
+            w * scale, h * scale,           // 크기
+            0                               // 플래그
+        );
     }
 }

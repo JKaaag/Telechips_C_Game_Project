@@ -29,19 +29,15 @@ void player_update()
     // 키 입력에 따라 이동 처리 및 플레이어 이동 방향 저장
     if (key[ALLEGRO_KEY_LEFT]) {
         player.x -= PLAYER_SPEED;
-        player.last_dir = DIR_LEFT;
     }
     if (key[ALLEGRO_KEY_RIGHT]) {
         player.x += PLAYER_SPEED;
-        player.last_dir = DIR_RIGHT;
     }
     if (key[ALLEGRO_KEY_UP]) {
         player.y -= PLAYER_SPEED;
-        player.last_dir = DIR_UP;
     }
     if (key[ALLEGRO_KEY_DOWN]) {
         player.y += PLAYER_SPEED;
-        player.last_dir = DIR_DOWN;
     }
 
     // 화면 밖으로 나가지 않도록 제한
@@ -72,13 +68,20 @@ void player_update()
     // 발사 딜레이 카운터 감소
     if (player.shot_timer)
         player.shot_timer--;
-    else if (key[ALLEGRO_KEY_X])
+    else
     {
-        // 플레이어 총알 생성
-        int x = player.x + (PLAYER_W / 2);
-        // 발사 후 재발사 대기
-        if (shots_add(true, true, player.x, player.y, player.last_dir))
-            player.shot_timer = 5;
+        // Z키: 왼쪽으로 발사
+        if (key[ALLEGRO_KEY_Z]) {
+            if (shots_add(true, true, player.x, player.y, DIR_LEFT)) {
+                player.shot_timer = 5; // 재발사 대기
+            }
+        }
+        // X키: 오른쪽으로 발사
+        else if (key[ALLEGRO_KEY_X]) {
+            if (shots_add(true, true, player.x, player.y, DIR_RIGHT)) {
+                player.shot_timer = 5; // 재발사 대기
+            }
+        }
     }
 }
 
@@ -106,12 +109,27 @@ void player_draw()
             return; // 이 프레임에는 그리지 않음
     }
 
-    // 플레이어 네모 그리기
+
+    // 2.5D 효과: y좌표에 따라 스케일 조정
+    DEPTH_MIN_SCALE = 1.0f;   // 화면 위쪽 (작게)
+    DEPTH_MAX_SCALE = 3.0f;   // 화면 아래쪽 (크게)
+
+    // y=110일 때 min_scale, y=PLAYER_MAX_Y일 때 max_scale
+    float t = (float)(player.y - 110) / (PLAYER_MAX_Y - 110);
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    float scale = DEPTH_MIN_SCALE + t * (DEPTH_MAX_SCALE - DEPTH_MIN_SCALE);
+
+    // 스케일된 크기
+    float w = PLAYER_W * scale;
+    float h = PLAYER_H * scale;
+
+    // 중심을 맞춰서 그리기 (플레이어 좌표 기준으로 보정)
     al_draw_filled_rectangle(
         player.x,
         player.y,
-        player.x + PLAYER_W,
-        player.y + PLAYER_H,
-        al_map_rgb(0, 255, 0) // 초록색
+        player.x + w,
+        player.y + h,
+        al_map_rgb(0, 255, 0)
     );
 }
