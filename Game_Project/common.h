@@ -122,6 +122,8 @@ typedef struct ENEMY
 #define ENEMIES_N 5
 ENEMY enemies[ENEMIES_N];
 
+bool spawn_enabled; // 리스폰 여부
+
 void enemies_init();
 void enemies_update();
 void enemies_draw();

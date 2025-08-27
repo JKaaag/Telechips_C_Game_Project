@@ -47,8 +47,8 @@ void player_update()
     // 화면 밖으로 나가지 않도록 제한
     if (player.x < 0)
         player.x = 0;
-    if (player.y < 0)
-        player.y = 0;
+    if (player.y < 110)
+        player.y = 110;
 
     if (player.x > PLAYER_MAX_X)
         player.x = PLAYER_MAX_X;

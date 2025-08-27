@@ -16,10 +16,11 @@ const int ENEMY_H[] = { 9, 10 };
 void enemies_init()
 {
     for (int i = 0; i < ENEMIES_N; i++) {
-        enemies[i].used = true;
+        enemies[i].used = false;
     }
 }
 
+bool spawn_enabled = true; // 리스폰 여부
 void enemies_update()
 {
     int new_quota = 5; // 이번 프레임에 새로 출현할 수 있는 몬스터 최대 수
@@ -30,7 +31,7 @@ void enemies_update()
     {
         if (!enemies[i].used)
         {
-            if (new_quota > 0)
+            if (spawn_enabled && new_quota > 0)
             {
                 // x좌표 배치 : 출현 quota 개수에 따라 오른쪽에서 간격을 두고 배치
                 enemies[i].x = start_x - (new_quota - 1) * gap;
@@ -46,11 +47,11 @@ void enemies_update()
                 switch (enemies[i].type)
                 {
                 case ENEMY_TYPE_1:
-                    enemies[i].hp = 10;
+                    enemies[i].hp = 2;
                     enemies[i].vx = 1;
                     break;
                 case ENEMY_TYPE_2:
-                    enemies[i].hp = 20;
+                    enemies[i].hp = 4;
                     enemies[i].vx = 1;
                     enemies[i].vy = 2;
                     break;

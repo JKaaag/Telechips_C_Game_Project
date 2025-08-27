@@ -67,6 +67,9 @@ int main() {
             shots_update();     // 총알 업데이트
             player_update();      // 플레이어 업데이트
             enemies_update();    // 적 업데이트
+            if (frames > 10) {   // 첫 10프레임 동안만 소환 허용
+                spawn_enabled = false;
+            }
 
             // ESC 키 -> 게임 종료
             if (key[ALLEGRO_KEY_ESCAPE])
@@ -94,6 +97,14 @@ int main() {
         {
             disp_pre_draw(); // 더블 버퍼 준비
             al_clear_to_color(al_map_rgb(0, 0, 0)); // 화면 클리어 (검정색)
+
+            // HUD 영역과 게임 플레이 영역 경계선
+            al_draw_line(
+                0, 110, // 시작점 (왼쪽)
+                BUFFER_W, 110, // 끝점 (오른쪽)
+                al_map_rgb(255, 255, 255), // 색상
+                1.0 // 두께
+            );
 
             enemies_draw(); // 적
             shots_draw();   // 총알
