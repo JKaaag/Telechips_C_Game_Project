@@ -25,6 +25,8 @@ void sprites_init()
 
     sprites.enemy[0] = sprite_grab(19, 0, ENEMY_1_W, ENEMY_1_H);
     sprites.enemy[1] = sprite_grab(19, 10, ENEMY_2_W, ENEMY_2_H);
+
+    sprites.enemy_shot = sprite_grab(13, 10, ENEMY_SHOT_W, ENEMY_SHOT_H);
 }
 
 void sprites_deinit()
@@ -34,6 +36,8 @@ void sprites_deinit()
 
     al_destroy_bitmap(sprites.enemy[0]);
     al_destroy_bitmap(sprites.enemy[1]);
+
+    al_destroy_bitmap(sprites.enemy_shot);
 
     al_destroy_bitmap(sprites._sheet);
 }

@@ -65,7 +65,6 @@ void player_update()
     }
 
     // 총알 발사 처리
-    // 발사 딜레이 카운터 감소
     if (player.shot_timer)
         player.shot_timer--;
     else

@@ -49,14 +49,15 @@ void enemies_update()
                 case ENEMY_TYPE_1:
                     enemies[i].hp = 2;
                     enemies[i].vx = 1;
+                    enemies[i].shot_timer = between(60, 150);
                     break;
                 case ENEMY_TYPE_2:
                     enemies[i].hp = 4;
                     enemies[i].vx = 1;
                     enemies[i].vy = 2;
+                    enemies[i].shot_timer = between(60, 150);
                     break;
                 }
-
                 new_quota--;
             }
             continue;
@@ -101,11 +102,40 @@ void enemies_update()
             enemies[i].blink = 4;
         }
 
-        // 외계인 체력 0 이하 시 처리
+        // 몹 체력 0 이하 시 처리
         if (enemies[i].hp <= 0)
         {
-            enemies[i].used = false; // 외계인 비활성화
+            enemies[i].used = false; // 몹 비활성화
             continue;
+        }
+
+        //몬스터 공격 처리
+        if (enemies[i].shot_timer > 0)
+            enemies[i].shot_timer--;
+
+        if (enemies[i].shot_timer <= 0)
+        {
+            int cx = enemies[i].x + ENEMY_W[enemies[i].type] / 2;
+            int cy = enemies[i].y + ENEMY_H[enemies[i].type] / 2;
+
+            // 진행 방향으로 발사 (vx 부호 기준)
+            DIRECTION fire_dir;
+            if (enemies[i].vx > 0)      fire_dir = DIR_LEFT;   // 왼쪽으로 이동중
+            else if (enemies[i].vx < 0) fire_dir = DIR_RIGHT;  // 오른쪽으로 이동중
+            else                        fire_dir = DIR_LEFT;   // 정지시 기본값
+
+            // shots_add(bool player, bool straight, int x, int y, DIRECTION dir)
+            shots_add(false, true, cx, cy, fire_dir);
+
+            switch (enemies[i].type)
+            {
+            case ENEMY_TYPE_1:
+                enemies[i].shot_timer = 150; // 다음 공격까지의 프레임
+                break;
+            case ENEMY_TYPE_2:
+                enemies[i].shot_timer = 80; // 다음 공격까지의 프레임
+                break;
+            }
         }
     }
 }

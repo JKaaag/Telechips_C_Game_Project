@@ -58,6 +58,7 @@ typedef struct SPRITES
     ALLEGRO_BITMAP* player_shot[2];
 
     ALLEGRO_BITMAP* enemy[2];
+    ALLEGRO_BITMAP* enemy_shot;
 } SPRITES;
 SPRITES sprites;
 
@@ -116,6 +117,7 @@ typedef struct ENEMY
     int x, y; // 몹의 현재 위치
     int vx, vy; // 몹의 속도
     ENEMY_TYPE type; // 몹의 종류
+    int shot_timer; // 다음 공격 시점까지 남은 프레임
     int blink; // 총알 맞은 후 깜빡인 효과용 타이머
     int hp; // 체력
     bool used; // 사용 중인지, 화면에 존재하는지 여부
