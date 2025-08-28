@@ -57,12 +57,19 @@ void player_update()
     if (player.invincible_timer > 0) {
         player.invincible_timer--;
     }
+    // 무적 상태가 아닌 경우
     else {
-        // 무적이 아닐 때만 충돌 체크
+        // 플레이어 <-> 몹 충돌
         if (enemies_collide(true, player.x, player.y, PLAYER_W, PLAYER_H)) {
             player.hp -= 10;
             if (player.hp < 0) player.hp = 0;
-            player.invincible_timer = 120; // 2초 정도 무적
+            player.invincible_timer = 120; // 2초 무적
+        }
+        // 플레이어 <-> 몹 총알 충돌
+        if (shots_collide(true, player.x, player.y, PLAYER_W, PLAYER_H))
+        {
+            player.hp--; // HP 감소
+            player.invincible_timer = 120; // 2초 무적
         }
     }
 
