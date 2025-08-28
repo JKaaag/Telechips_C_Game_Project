@@ -17,7 +17,7 @@ void player_init()
     player.shot_timer = 0;
     player.hp = 100;
     player.invincible_timer = 120; // 무적 시간
-
+    player.last_dir = DIR_RIGHT; // 초기 총알 방향
 }
 
 void player_update()
@@ -29,9 +29,11 @@ void player_update()
     // 키 입력에 따라 이동 처리 및 플레이어 이동 방향 저장
     if (key[ALLEGRO_KEY_LEFT]) {
         player.x -= PLAYER_SPEED;
+        player.last_dir = DIR_LEFT;
     }
     if (key[ALLEGRO_KEY_RIGHT]) {
         player.x += PLAYER_SPEED;
+        player.last_dir = DIR_RIGHT;
     }
     if (key[ALLEGRO_KEY_UP]) {
         player.y -= PLAYER_SPEED;
@@ -69,13 +71,10 @@ void player_update()
         player.shot_timer--;
     else
     {
-        player.shot_timer = 30; // 재발사 대기 시간
-        // Z키: 왼쪽으로 발사
-        if (key[ALLEGRO_KEY_Z])
-            shots_add(true, true, player.x, player.y, DIR_LEFT);
-        // X키: 오른쪽으로 발사
-        else if (key[ALLEGRO_KEY_X])
-            shots_add(true, true, player.x, player.y, DIR_RIGHT);
+        // X키: 공격
+        if (key[ALLEGRO_KEY_X])
+            if (shots_add(true, true, player.x, player.y, player.last_dir))
+                player.shot_timer = 30;
     }
 }
 
@@ -102,7 +101,6 @@ void player_draw()
         if (((player.invincible_timer / 2) % 3) == 1)
             return; // 이 프레임에는 그리지 않음
     }
-
 
     // 2.5D 효과: y좌표에 따라 스케일 조정
     DEPTH_MIN_SCALE = 1.0f;   // 화면 위쪽 (작게)

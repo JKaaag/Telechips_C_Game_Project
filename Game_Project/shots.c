@@ -38,10 +38,10 @@ bool shots_add(bool player, bool straight, int x, int y, DIRECTION dir) {
 
             // 플레이어 방향 저장
             switch (dir) {
-                case DIR_UP:    shots[i].dir = SHOT_UP; break;
-                case DIR_DOWN:  shots[i].dir = SHOT_DOWN; break;
-                case DIR_LEFT:  shots[i].dir = SHOT_LEFT; break;
-                case DIR_RIGHT: shots[i].dir = SHOT_RIGHT; break;
+            case DIR_UP:    shots[i].dir = SHOT_UP; break;
+            case DIR_DOWN:  shots[i].dir = SHOT_DOWN; break;
+            case DIR_LEFT:  shots[i].dir = SHOT_LEFT; break;
+            case DIR_RIGHT: shots[i].dir = SHOT_RIGHT; break;
             }
         }
         // 적 총알이면
@@ -59,7 +59,7 @@ bool shots_add(bool player, bool straight, int x, int y, DIRECTION dir) {
                 if (dir == DIR_LEFT) {
                     shots[i].dx = -spd;
                     shots[i].dy = 0;
-                    shots[i].dir = SHOT_LEFT; 
+                    shots[i].dir = SHOT_LEFT;
                 }
                 // 오른쪽 사격
                 else {

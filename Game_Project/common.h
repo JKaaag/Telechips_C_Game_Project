@@ -97,6 +97,7 @@ typedef struct PLAYER
     int shot_timer; // 총알 발사 딜레이 카운터
     int hp; // 플레이어 HP
     int invincible_timer; // 무적 상태 타이머
+    DIRECTION last_dir; // 마지막 이동 방향
 } PLAYER;
 PLAYER player;
 
