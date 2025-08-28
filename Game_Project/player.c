@@ -14,7 +14,8 @@ void player_init()
 {
     player.x = (BUFFER_W / 2) - (PLAYER_W / 2);
     player.y = (BUFFER_H / 2) - (PLAYER_H / 2);
-    player.shot_timer = 0;
+    player.normal_shot_timer = 30;
+    player.strong_shot_timer = 120;
     player.hp = 100;
     player.invincible_timer = 120; // 무적 시간
     player.last_dir = DIR_RIGHT; // 초기 총알 방향
@@ -66,22 +67,34 @@ void player_update()
             player.invincible_timer = 120; // 2초 무적
         }
         // 플레이어 <-> 몹 총알 충돌
-        if (shots_collide(true, player.x, player.y, PLAYER_W, PLAYER_H))
+        int damage = shots_collide(true, player.x, player.y, PLAYER_W, PLAYER_H);
+        if(damage > 0)
         {
-            player.hp--; // HP 감소
+            player.hp -= damage; // HP 감소
+            if (player.hp < 0) player.hp = 0;
             player.invincible_timer = 120; // 2초 무적
         }
     }
 
     // 총알 발사 처리
-    if (player.shot_timer)
-        player.shot_timer--;
-    else
-    {
-        // X키: 공격
-        if (key[ALLEGRO_KEY_X])
-            if (shots_add(true, true, player.x, player.y, player.last_dir))
-                player.shot_timer = 30;
+    // 일반 공격 (X키)
+    if (player.normal_shot_timer > 0) {
+        player.normal_shot_timer--;
+    }
+    else if (key[ALLEGRO_KEY_X]) {
+        if (shots_add(true, true, player.x, player.y, player.last_dir, 1)) {
+            player.normal_shot_timer = 30; // 일반 공격 쿨타임
+        }
+    }
+
+    // 강한 공격 (Z키)
+    if (player.strong_shot_timer > 0) {
+        player.strong_shot_timer--;
+    }
+    else if (key[ALLEGRO_KEY_Z]) {
+        if (shots_add(true, true, player.x, player.y, player.last_dir, 4)) {
+            player.strong_shot_timer = 120; // 강공격 쿨타임
+        }
     }
 }
 
@@ -113,7 +126,7 @@ void player_draw()
     DEPTH_MIN_SCALE = 1.0f;   // 화면 위쪽 (작게)
     DEPTH_MAX_SCALE = 3.0f;   // 화면 아래쪽 (크게)
 
-    // y=110일 때 min_scale, y=PLAYER_MAX_Y일 때 max_scale
+    // y = 110일 때 min_scale, y = PLAYER_MAX_Y일 때 max_scale
     float t = (float)(player.y - 110) / (PLAYER_MAX_Y - 110);
     if (t < 0) t = 0;
     if (t > 1) t = 1;

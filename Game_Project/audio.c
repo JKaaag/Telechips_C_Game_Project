@@ -14,11 +14,14 @@ void audio_init()
     al_init_acodec_addon();
     al_reserve_samples(128);
 
-    sample_shot = al_load_sample("shot.flac");
-    must_init(sample_shot, "shot sample");
+    sample_normal_shot = al_load_sample("shot.flac");
+    must_init(sample_normal_shot, "shot sample");
+    sample_strong_shot = al_load_sample("shot.flac");
+    must_init(sample_strong_shot, "shot sample");
 }
 
 void audio_deinit()
 {
-    al_destroy_sample(sample_shot);
+    al_destroy_sample(sample_normal_shot);
+    al_destroy_sample(sample_strong_shot);
 }

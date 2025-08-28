@@ -96,9 +96,10 @@ void enemies_update()
             enemies[i].blink--;
 
         // 플레이어 총알 <-> 몹 충돌 체크
-        if (shots_collide(false, enemies[i].x, enemies[i].y, ENEMY_W[enemies[i].type], ENEMY_H[enemies[i].type]))
+        int damage = shots_collide(false, enemies[i].x, enemies[i].y, ENEMY_W[enemies[i].type], ENEMY_H[enemies[i].type]);
+        if (damage > 0)
         {
-            enemies[i].hp--;
+            enemies[i].hp -= damage;
             enemies[i].blink = 4;
         }
 
@@ -125,7 +126,7 @@ void enemies_update()
             else                        fire_dir = DIR_LEFT;   // 정지시 기본값
 
             // shots_add(bool player, bool straight, int x, int y, DIRECTION dir)
-            shots_add(false, true, cx, cy, fire_dir);
+            shots_add(false, true, cx, cy, fire_dir, 1);
 
             switch (enemies[i].type)
             {

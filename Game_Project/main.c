@@ -97,9 +97,9 @@ int main() {
             shots_update();     // 총알 업데이트
             player_update();      // 플레이어 업데이트
             enemies_update();    // 적 업데이트
-            //if (frames > 10) {   // 첫 10프레임 동안만 소환 허용
-            //    spawn_enabled = false;
-            //}
+            if (frames > 10) {   // 첫 10프레임 동안만 소환 허용
+                spawn_enabled = false;
+            }
 
             // ESC 키 -> 게임 종료
             if (key[ALLEGRO_KEY_ESCAPE])

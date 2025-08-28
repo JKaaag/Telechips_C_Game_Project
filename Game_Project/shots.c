@@ -13,16 +13,29 @@ void shots_init() {
         shots[i].used = false;
 }
 
-bool shots_add(bool player, bool straight, int x, int y, DIRECTION dir) {
-    // 사운드 재생 (플레이어/적 구분해서)
-    al_play_sample(
-        sample_shot,
-        0.3,
-        0,
-        player ? 1.0 : between_f(1.5, 1.6),
-        ALLEGRO_PLAYMODE_ONCE,
-        NULL
-    );
+bool shots_add(bool player, bool straight, int x, int y, DIRECTION dir, int power) {
+    // 강한 공격(플레이어)
+    if (player && power >= 4) {
+        al_play_sample(
+            sample_strong_shot,
+            0.8,
+            0,
+            0.6,
+            ALLEGRO_PLAYMODE_ONCE,
+            NULL
+        );
+    }
+    else {
+        // 일반 공격(플레이어/적)
+        al_play_sample(
+            sample_normal_shot,
+            0.3,
+            0,
+            player ? 1.0 : between_f(1.5, 1.6),
+            ALLEGRO_PLAYMODE_ONCE,
+            NULL
+        );
+    }
 
     for (int i = 0; i < SHOTS_N; i++) {
         // 빈 슬롯 찾기
@@ -81,9 +94,10 @@ bool shots_add(bool player, bool straight, int x, int y, DIRECTION dir) {
 
             shots[i].frame = 0;
         }
-
         shots[i].frame = 0;
         shots[i].used = true;
+        shots[i].power = power;
+
         return true;
     }
     return false;
@@ -131,7 +145,7 @@ void shots_update() {
     }
 }
 
-bool shots_collide(bool player, int x, int y, int w, int h) {
+int shots_collide(bool player, int x, int y, int w, int h) {
     for (int i = 0; i < SHOTS_N; i++) {
         // 총알 사용 여부 확인
         if (!shots[i].used) continue;
@@ -153,11 +167,12 @@ bool shots_collide(bool player, int x, int y, int w, int h) {
         // 충돌 체크
         if (collide(x, y, x + w, y + h, shots[i].x, shots[i].y, shots[i].x + sw, shots[i].y + sh))
         {
-            shots[i].used = false; // 총알 제거
-            return true;           // 충돌 발생
+            int damage = shots[i].power; // 공격력 저장
+            shots[i].used = false;
+            return damage; // 맞으면 공격력 반환
         }
     }
-    return false;
+    return 0; // 충돌 없으면 0 반환
 }
 
 void shots_draw() {
@@ -189,14 +204,22 @@ void shots_draw() {
             float cx = al_get_bitmap_width(bmp) / 2.0f;
             float cy = al_get_bitmap_height(bmp) / 2.0f;
 
-            al_draw_scaled_rotated_bitmap(
+            // 총알 색 결정
+            ALLEGRO_COLOR tint;
+            if (shots[i].power >= 4)
+                tint = al_map_rgb(255, 0, 0); // 강공격(Z키) → 빨강
+            else
+                tint = al_map_rgb(255, 255, 255); // 일반(X키) → 흰색
+
+            al_draw_tinted_scaled_rotated_bitmap(
                 bmp,
+                tint, // 색상 곱하기
                 cx, cy, // 회전 기준 (중심)
-                shots[i].x + cx, // 화면상 X 위치
-                shots[i].y + cy, // 화면상 Y 위치
-                scale, scale, // 스케일 적용
-                angle, // 회전
-                0 // 플래그
+                shots[i].x + cx,
+                shots[i].y + cy,
+                scale, scale,
+                angle,
+                0
             );
         }
         // 적 총알

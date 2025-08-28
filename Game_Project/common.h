@@ -67,7 +67,8 @@ void sprites_init();
 void sprites_deinit();
 
 // audio
-ALLEGRO_SAMPLE* sample_shot; // 총알 발사 소리
+ALLEGRO_SAMPLE* sample_normal_shot; // 일반 공격
+ALLEGRO_SAMPLE* sample_strong_shot; // 강한 공격
 
 void audio_init();
 void audio_deinit();
@@ -94,7 +95,8 @@ typedef enum DIRECTION {
 typedef struct PLAYER
 {
     int x, y; // 플레이어 위치 좌표
-    int shot_timer; // 총알 발사 딜레이 카운터
+    int normal_shot_timer; // 일반공격 딜레이 카운터
+    int strong_shot_timer; // 강공격 딜레이 카운터
     int hp; // 플레이어 HP
     int invincible_timer; // 무적 상태 타이머
     DIRECTION last_dir; // 마지막 이동 방향
@@ -149,15 +151,16 @@ typedef struct SHOT
     bool player; // 플레이어 총알(true), 적 총알(false) 구분
     bool used; // 사용 여부(활성화된 총알인지)
     SHOT_DIR dir; // 총알 방향
+    int power; // 총알 공격력
 } SHOT;
 
 #define SHOTS_N 128
 SHOT shots[SHOTS_N];
 
 void shots_init();
-bool shots_add(bool player, bool straight, int x, int y, DIRECTION dir);
+bool shots_add(bool player, bool straight, int x, int y, DIRECTION dir, int power);
 void shots_update();
-bool shots_collide(bool player, int x, int y, int w, int h);
+int shots_collide(bool player, int x, int y, int w, int h);
 void shots_draw();
 
 // hud
